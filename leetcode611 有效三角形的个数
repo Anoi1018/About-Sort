@@ -1,0 +1,37 @@
+给定一个包含非负整数的数组，你的任务是统计其中可以组成三角形三条边的三元组个数。
+
+示例 1:
+输入: [2,2,3,4]
+输出: 3
+解释:
+有效的组合是: 
+2,3,4 (使用第一个 2)
+2,3,4 (使用第二个 2)
+2,2,3
+
+注意:
+数组长度不超过1000。
+数组里整数的范围为 [0, 1000]。
+
+代码示意：
+排序+双指针
+时间复杂度：O（n^2） 空间复杂度：O（n）
+var triangleNumber = function(nums) {
+    if(!nums || nums.length<3) return 0;
+    nums.sort((a,b)=>a-b);
+    let count =0 ,n = nums.length;
+    //固定最长的边 即先确定c 从数组末尾开始
+    for(let c=n-1;c>1;c--){
+        let a = 0,b = c-1;
+        while(a<b){
+            if(nums[a]+nums[b]>nums[c]){ //注意此处 a，b，c表示的是下标 不是数本身
+                count += b-a; //当前 a b c 符合条件 则比a大的 位于a与b之间的数字都可以作为a来组成三角形 个数为b-a
+                b--;
+            }else{
+               a++;
+            }
+        }
+    }
+    return count;
+}
+    
