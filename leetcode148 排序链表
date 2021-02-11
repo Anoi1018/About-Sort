@@ -1,0 +1,62 @@
+题目描述：
+在 O(n log n) 时间复杂度和常数级空间复杂度下，对链表进行排序。
+
+示例 1:
+输入: 4->2->1->3
+输出: 1->2->3->4
+
+示例 2:
+输入: -1->5->3->4->0
+输出: -1->0->3->4->5
+
+代码示意：
+归并排序 + 快慢指针找中间节点
+var sortList = function(head) {
+     if(head === null || head.next===null) return head;
+     return mergeSort(head);
+};
+//快慢指针找中间节点 实现链表的二分
+var getMiddle = function(node){
+    let slow = node,fast = node;
+    while(fast && fast.next && fast.next.next){ //注意此处边界条件 有三个
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    return slow; //返回中间节点 或中间 两节点的前一个作为中间节点
+}
+//二分链表 直至每个链表长度为1
+var mergeSort = function(head){
+    if(!head || !head.next) { //递归出口 分到当前链表长度为1
+        return head
+    }
+    let middle = getMiddle(head);
+    
+    let temp = middle.next;
+    middle.next = null;
+    let left = head;let right = temp;//注意此处  通过middle.next 得到两链表头节点 实现链表划分 与数组区分开
+    
+    left = mergeSort(left);
+    right = mergeSort(right);
+    
+    return merge(left,right); //归并
+}
+//将小链表归并排序为大链表
+var merge = function(l1,l2){
+    let pre = new ListNode(),cur = pre;
+    while(l1 && l2){ //只要链表存在 即链表头节点存在
+        if(l1.val < l2.val){
+            cur.next = l1;
+            l1 = l1.next;
+        }else{
+            cur.next = l2;
+            l2 = l2.next;
+        }
+        cur = cur.next;
+    }
+    cur.next = l1 || l2; //将有节点剩余的链表直接连接到结果链表后面
+    return pre.next;
+}
+
+复杂度分析：
+时间复杂度：递归的总次数为 T(logn) ，每次递归的数量为 T(n) ，时间复杂度为 O(nlogn)
+空间复杂度：递归的深度为 T(logn) ，每次递归创建变量的个数为 T(c) （c为常数），空间复杂度为 O(logn)
